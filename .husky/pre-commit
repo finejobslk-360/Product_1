@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+
+echo "→ running lint-staged"
+npx lint-staged
+npm test

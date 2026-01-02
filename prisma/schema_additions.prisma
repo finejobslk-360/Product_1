@@ -1,0 +1,34 @@
+
+model Education {
+  id           String   @id @default(cuid())
+  school       String
+  degree       String
+  fieldOfStudy String
+  startDate    String
+  endDate      String?
+  grade        String?
+  description  String?
+  
+  profileId    String
+  profile      Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([profileId])
+}
+
+model CV {
+  id          String   @id @default(cuid())
+  title       String
+  templateId  String
+  content     Json     // Stores the snapshot of data used for this CV
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+}
