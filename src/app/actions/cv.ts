@@ -1,7 +1,3 @@
-'// CV actions converted to client-only/local behavior.
-'// The original server-side Prisma-backed implementation was removed
-'// to keep CV building/rendering purely frontend as requested.
-
 import { CVData } from '@/types/cv';
 
 type LocalCv = {

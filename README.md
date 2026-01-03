@@ -1,6 +1,6 @@
 ## Overview
 
-This repository hosts the **360° Product 1** web application built with Next.js 16 (App Router) and TypeScript. The project ships with Tailwind CSS + shadcn/ui for UI primitives, Firebase for auth, and Prisma/PostgreSQL (database layer handled on a separate branch).
+This repository hosts the ** Finejobs** web application built with Next.js 16 (App Router) and TypeScript. The project ships with Tailwind CSS + shadcn/ui for UI primitives, Firebase for auth, and Prisma/PostgreSQL (database layer handled on a separate branch).
 
 ## Quick Start
 

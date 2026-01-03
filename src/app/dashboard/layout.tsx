@@ -1,8 +1,8 @@
 ﻿'use client';
 
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useMemo, useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   Briefcase,
@@ -45,18 +45,29 @@ const adminNavItems: NavItem[] = [
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const isClient = typeof window !== 'undefined';
-  const [role] = useState<UserRole>(() =>
-    isClient ? (window.localStorage.getItem('userRole') as UserRole | null) : null
-  );
-  const [userName] = useState<string>(() =>
-    isClient ? window.localStorage.getItem('userName') || 'User' : 'User'
-  );
-  const [userSubtitle] = useState<string>(
-    () =>
-      (isClient ? window.localStorage.getItem('userSubtitle') || 'Workspace member' : undefined) ||
-      'Workspace member'
-  );
+  const router = useRouter();
+  
+  const [role, setRole] = useState<UserRole>(null);
+  const [userName, setUserName] = useState<string>('User');
+  const [userSubtitle, setUserSubtitle] = useState<string>('Workspace member');
+
+  useEffect(() => {
+    // Load user data from local storage on client side only
+    const storedRole = window.localStorage.getItem('userRole') as UserRole | null;
+    const storedName = window.localStorage.getItem('userName');
+    const storedSubtitle = window.localStorage.getItem('userSubtitle');
+
+    if (storedRole) setRole(storedRole);
+    if (storedName) setUserName(storedName);
+    if (storedSubtitle) setUserSubtitle(storedSubtitle);
+  }, []);
+
+  useEffect(() => {
+    if (role === 'JOB_SEEKER') {
+      router.push('/user');
+    }
+  }, [role, router]);
+
   const notificationCount: number | null = null;
 
   const initials = useMemo(() => {

@@ -180,6 +180,22 @@ export default function SignUpPage() {
     setLoading(true);
 
     try {
+      // Check if email already exists in DB to avoid asking further questions
+      try {
+        const checkRes = await fetch(`/api/auth/check-email?email=${encodeURIComponent(
+          formData.email
+        )}`);
+        const checkData = await checkRes.json();
+        if (checkRes.ok && checkData.exists) {
+          setError('This email is already registered. Please sign in instead.');
+          setLoading(false);
+          return;
+        }
+      } catch (e) {
+        // If the check fails, continue - we'll rely on Firebase/server errors
+        console.warn('Email check failed:', e);
+      }
+
       // Create user with Firebase
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -241,7 +257,7 @@ export default function SignUpPage() {
         if (data.user.role === 'EMPLOYER') {
           router.push('/dashboard/employer');
         } else {
-          router.push('/dashboard/seeker');
+          router.push('/user'); 
         }
       }
     } catch (err) {
@@ -315,9 +331,11 @@ export default function SignUpPage() {
         if (signInData.user.role === 'ADMIN') {
           router.push('/dashboard/admin');
         } else if (signInData.user.role === 'EMPLOYER') {
-          router.push('/dashboard/employer');
+          router.push('/dashboard');
+        } else if (signInData.user.role === 'JOB_SEEKER') {
+          router.push('/user');
         } else {
-          router.push('/dashboard/seeker');
+          router.push('/user');
         }
         return;
       }
@@ -350,9 +368,11 @@ export default function SignUpPage() {
       } else {
         // If onboarding already completed, go directly to dashboard
         if (data.user.role === 'EMPLOYER') {
-          router.push('/dashboard/employer');
+          router.push('/dashboard');
+        } else if (data.user.role === 'JOB_SEEKER') {
+          router.push('/user');
         } else {
-          router.push('/dashboard/seeker');
+          router.push('/user');
         }
       }
     } catch (err) {
@@ -400,10 +420,12 @@ export default function SignUpPage() {
       // Redirect based on user role (always navigate even if DB save failed)
       if (userData?.role === 'ADMIN') {
         router.push('/dashboard/admin');
+      } else if (userData?.role === 'JOB_SEEKER') {
+        router.push('/user');
       } else if (userData?.role === 'EMPLOYER') {
-        router.push('/dashboard/employer');
+        router.push('/dashboard');
       } else {
-        router.push('/dashboard/seeker');
+        router.push('/user');
       }
     } catch (err) {
       console.error('Onboarding error:', err);
@@ -414,10 +436,12 @@ export default function SignUpPage() {
         setShowOnboarding(false);
         if (userData?.role === 'ADMIN') {
           router.push('/dashboard/admin');
+        } else if (userData?.role === 'JOB_SEEKER') {
+          router.push('/user');
         } else if (userData?.role === 'EMPLOYER') {
-          router.push('/dashboard/employer');
+          router.push('/dashboard');
         } else {
-          router.push('/dashboard/seeker');
+          router.push('/user');
         }
       }
     }
@@ -490,7 +514,7 @@ export default function SignUpPage() {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <p className="text-[10px] uppercase tracking-[0.3em] text-gray-400 font-semibold">
-                  Join 360°
+                  Join 
                 </p>
                 <h2 className="text-xl font-semibold text-gray-900 mt-1">Create your account</h2>
               </div>

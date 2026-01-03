@@ -40,8 +40,8 @@ export async function GET(request: NextRequest) {
     });
 
     // Format the response
-    const formattedConversations = conversations.map((conv) => {
-      const otherParticipant = conv.participants.find((p) => p.userId !== user.id)?.user;
+    const formattedConversations = conversations.map((conv: any) => {
+      const otherParticipant = conv.participants.find((p: any) => p.userId !== user.id)?.user;
       const lastMessage = conv.messages[0];
 
       return {

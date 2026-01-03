@@ -71,9 +71,9 @@ export default function UserLayout({ children }: { children: ReactNode }) {
               U
             </div>
             {/* Logo Text */}
-            <span className="font-bold text-gray-900 text-lg opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 delay-100">
-              UserPanel
-            </span>
+            <Link href="/" className="font-bold text-gray-900 text-lg opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 delay-100">
+              FineJobs           
+            </Link>
           </div>
           <button
             onClick={() => setIsMobileMenuOpen(false)}
