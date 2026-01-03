@@ -67,6 +67,7 @@ model Profile {
   bio                   String?
   headline              String?
   location              String?
+  contactNumber         String?
   education             String?
   educations            Education[]
   experienceLevel       String?

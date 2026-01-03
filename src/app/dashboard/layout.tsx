@@ -14,8 +14,14 @@ import {
   Bell,
   Search,
   LogOut,
+  Building2,
+  Ticket,
+  DollarSign,
+  Server,
+  Shield,
 } from 'lucide-react';
 import { auth, signOut } from '@/lib/firebaseClient';
+import ProfileSettingsModal from '@/components/admin/ProfileSettingsModal';
 
 type UserRole = 'ADMIN' | 'EMPLOYER' | 'JOB_SEEKER' | null;
 
@@ -37,29 +43,61 @@ const employerNavItems: NavItem[] = [
 
 const adminNavItems: NavItem[] = [
   { label: 'Dashboard', href: '/dashboard/admin', icon: LayoutDashboard },
-  { label: 'Jobs', href: '/dashboard/manage-jobs', icon: Briefcase },
-  { label: 'Applicants', href: '/dashboard/applicants', icon: Users },
-  { label: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
-  { label: 'Settings', href: '/dashboard/settings', icon: Settings },
+  { label: 'Admin Management', href: '/dashboard/admin/admins', icon: Shield },
+  { label: 'Employer Management', href: '/dashboard/admin/employers', icon: Users },
+  { label: 'Company Management', href: '/dashboard/admin/companies', icon: Building2 },
+  { label: 'Gig Management', href: '/dashboard/admin/gigs', icon: Wallet },
+  { label: 'Support Tickets', href: '/dashboard/admin/tickets', icon: Ticket },
+  { label: 'Analytics', href: '/dashboard/admin/analytics', icon: BarChart3 },
+  { label: 'Revenue', href: '/dashboard/admin/revenue', icon: DollarSign },
+  { label: 'System Settings', href: '/dashboard/admin/system-settings', icon: Server },
 ];
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  
-  const [role, setRole] = useState<UserRole>(null);
-  const [userName, setUserName] = useState<string>('User');
-  const [userSubtitle, setUserSubtitle] = useState<string>('Workspace member');
+
+  const [role] = useState<UserRole>(() => {
+    if (typeof window !== 'undefined') {
+      return (window.localStorage.getItem('userRole') as UserRole) || null;
+    }
+    return null;
+  });
+  const [userName, setUserName] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return window.localStorage.getItem('userName') || 'User';
+    }
+    return 'User';
+  });
+  const [userSubtitle] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return window.localStorage.getItem('userSubtitle') || 'Workspace member';
+    }
+    return 'Workspace member';
+  });
+  const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
+  const [showProfileModal, setShowProfileModal] = useState(false);
 
   useEffect(() => {
-    // Load user data from local storage on client side only
-    const storedRole = window.localStorage.getItem('userRole') as UserRole | null;
-    const storedName = window.localStorage.getItem('userName');
-    const storedSubtitle = window.localStorage.getItem('userSubtitle');
-
-    if (storedRole) setRole(storedRole);
-    if (storedName) setUserName(storedName);
-    if (storedSubtitle) setUserSubtitle(storedSubtitle);
+    // Fetch profile data
+    const fetchProfile = async () => {
+      try {
+        const response = await fetch('/api/admin/profile');
+        const data = await response.json();
+        if (response.ok && data.profile) {
+          if (data.profile.fullName) {
+            setUserName(data.profile.fullName);
+            window.localStorage.setItem('userName', data.profile.fullName);
+          }
+          if (data.profile.profileImageUrl) {
+            setProfileImageUrl(data.profile.profileImageUrl);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+      }
+    };
+    fetchProfile();
   }, []);
 
   useEffect(() => {
@@ -100,12 +138,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     <div className="fixed inset-0 z-50 flex bg-gray-50">
       <aside className="bg-white border-r border-gray-200 flex flex-col w-64 overflow-hidden">
         <div className="px-4 py-6 border-b border-gray-200 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-blue-600 text-white font-semibold flex items-center justify-center text-sm">
-            360A
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-gray-900">360 Technologies</p>
-            <p className="text-xs text-gray-500">
+          <div className="leading-tight">
+            <p className="text-[15px] uppercase tracking-[0.4em] font-semibold text-gray-900">
+              Finejobs
+            </p>
+            <p className="text-xs text-gray-500 mt-0.5">
               {role === 'ADMIN' ? 'Admin' : 'Company'} workspace
             </p>
           </div>
@@ -161,20 +198,34 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 </span>
               )}
             </button>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 text-white text-xs flex items-center justify-center font-semibold">
-                {initials}
+            <button
+              onClick={() => setShowProfileModal(true)}
+              className="flex items-center gap-2 hover:bg-gray-50 rounded-lg px-2 py-1 transition-colors"
+            >
+              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 text-white text-xs flex items-center justify-center font-semibold overflow-hidden border-2 border-gray-200">
+                {profileImageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={profileImageUrl} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  initials
+                )}
               </div>
               <div className="hidden md:block text-left">
                 <p className="text-xs font-semibold text-gray-900">{userName}</p>
                 <p className="text-[11px] text-gray-500">{userSubtitle}</p>
               </div>
-            </div>
+            </button>
           </div>
         </header>
 
         <div className="flex-1 p-6 overflow-y-auto">{children}</div>
       </main>
+
+      <ProfileSettingsModal
+        isOpen={showProfileModal}
+        onClose={() => setShowProfileModal(false)}
+        onUpdate={fetchProfile}
+      />
     </div>
   );
 }

@@ -3,7 +3,6 @@ import { SESSION_COOKIE_NAME, getSessionUser } from '@/lib/auth/session';
 import { prisma } from '@/lib/prisma';
 
 const PROTECTED_PREFIXES = ['/dashboard'];
-const AUTH_PREFIXES = ['/auth/signin', '/auth/signup'];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -30,7 +29,6 @@ export async function proxy(request: NextRequest) {
   }
 
   const isProtected = PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
-  const isAuthRoute = AUTH_PREFIXES.some((prefix) => pathname.startsWith(prefix));
   const isAdminRoute = pathname.startsWith('/dashboard/admin');
 
   if (isProtected && !decoded) {
@@ -43,11 +41,8 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
-  if (decoded && isAuthRoute) {
-    // Already signed-in users hitting auth pages: route admins to admin dashboard, others to main dashboard
-    const target = isAdmin ? '/dashboard/admin' : '/dashboard';
-    return NextResponse.redirect(new URL(target, request.url));
-  }
+  // Allow logged-in users to access auth pages (they can sign out or switch accounts)
+  // Removed redirect to allow access to sign-in page even when logged in
 
   const requestHeaders = new Headers(request.headers);
   if (decoded) {

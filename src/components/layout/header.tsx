@@ -17,7 +17,12 @@ const primaryNav = [
 
 export default function Header() {
   const pathname = usePathname();
-  const [sessionUser, setSessionUser] = useState<null | { id: string; email: string; role: string; profile?: { fullName?: string } }>(null);
+  const [sessionUser, setSessionUser] = useState<null | {
+    id: string;
+    email: string;
+    role: string;
+    profile?: { fullName?: string };
+  }>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -49,11 +54,8 @@ export default function Header() {
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-xl">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <Link href="/" className="flex items-center gap-3 font-semibold text-base md:text-lg">
-          
           <div className="hidden sm:block leading-tight">
-            <p className="text-[15px] uppercase tracking-[0.4em] ">
-              Finejobs
-            </p>
+            <p className="text-[15px] uppercase tracking-[0.4em] ">Finejobs</p>
           </div>
         </Link>
 
@@ -77,13 +79,12 @@ export default function Header() {
             <div className="h-9 w-20 animate-pulse rounded bg-muted" />
           ) : !sessionUser ? (
             <>
-              <Button
-                variant="ghost"
-                asChild
-                className="hidden text-xs font-semibold uppercase tracking-wide md:flex"
+              <Link
+                href="/auth/signin"
+                className="hidden md:flex h-9 px-4 py-2 items-center justify-center gap-2 whitespace-nowrap rounded-md text-xs font-semibold uppercase tracking-wide transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
               >
-                <Link href="/auth/signin">Login</Link>
-              </Button>
+                Login
+              </Link>
               <Button asChild className="text-xs font-semibold uppercase tracking-wide">
                 <Link href="/auth/signup">Register</Link>
               </Button>
