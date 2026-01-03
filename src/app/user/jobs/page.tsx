@@ -3,7 +3,6 @@ import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { MapPin, Clock, Briefcase, ArrowRight } from 'lucide-react';
-import { Job } from '@prisma/client';
 
 export default async function UserJobsPage() {
   const session = await getSession();
@@ -46,7 +45,7 @@ export default async function UserJobsPage() {
   });
 
   // Scoring Logic
-  const scoredJobs = jobs.map((job) => {
+  const scoredJobs = jobs.map((job: any) => {
     let score = 0;
 
     // Experience Match
@@ -58,16 +57,14 @@ export default async function UserJobsPage() {
     // Job Type Match
     if (preferredJobTypes && preferredJobTypes.length > 0) {
       const jobTypeStr = job.type.toString();
-      const match = preferredJobTypes.some(
-        (pt) => pt.toUpperCase().replace(' ', '_') === jobTypeStr
-      );
+      const match = preferredJobTypes.some((pt: any) => pt.toUpperCase().replace(' ', '_') === jobTypeStr);
       if (match) score += 5;
     }
 
     // Skills Match
     if (skills && skills.length > 0) {
-      const matchingTags = job.tags.filter((tag) =>
-        skills.some((skill) => skill.toLowerCase() === tag.toLowerCase())
+      const matchingTags = job.tags.filter((tag: any) =>
+        skills.some((skill: any) => skill.toLowerCase() === tag.toLowerCase())
       );
       score += matchingTags.length * 2;
     }
@@ -76,7 +73,7 @@ export default async function UserJobsPage() {
   });
 
   // Sort by score desc
-  scoredJobs.sort((a, b) => b.score - a.score);
+  scoredJobs.sort((a: any, b: any) => b.score - a.score);
 
   // Determine which jobs to show
   const recommendedThreshold = 1; // At least one match
@@ -128,16 +125,7 @@ export default async function UserJobsPage() {
   );
 }
 
-function JobCard({
-  job,
-}: {
-  job: Job & {
-    employer: {
-      profile: { fullName: string; profileImageUrl: string | null } | null;
-      email: string;
-    };
-  };
-}) {
+function JobCard({ job }: { job: any }) {
   return (
     <Link href={`/jobs/${job.id}`} className="block group">
       <div className="bg-white p-4 md:p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 hover:border-blue-300">
@@ -162,7 +150,7 @@ function JobCard({
             <p className="text-gray-600 text-sm mb-4 line-clamp-2">{job.description}</p>
 
             <div className="flex flex-wrap gap-2 mb-4">
-              {job.tags.slice(0, 5).map((tag, index) => (
+              {job.tags.slice(0, 5).map((tag: any, index: number) => (
                 <span
                   key={index}
                   className="px-2.5 py-1 bg-gray-100 text-gray-600 text-xs rounded-md font-medium border border-gray-100"

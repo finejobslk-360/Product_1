@@ -15,9 +15,12 @@ type SignupPayload = {
   role?: string;
   onboardingData?: {
     jobCategory?: string;
+    experienceLevel?: string;
     experience?: string;
     education?: string;
     location?: string;
+    skills?: string | string[];
+    goal?: string;
   };
 };
 
@@ -55,7 +58,19 @@ export async function POST(request: NextRequest) {
     // Only attempt database operations if DATABASE_URL is set
     if (process.env.DATABASE_URL) {
       try {
-        // Check if user already exists
+        // First, check if an account already exists with this email
+        const existingByEmail = await prisma.user.findUnique({
+          where: { email: resolvedEmail },
+        });
+
+        if (existingByEmail) {
+          return NextResponse.json(
+            { error: 'Account with this email already exists. Please sign in instead.' },
+            { status: 409 }
+          );
+        }
+
+        // Check if user already exists by firebaseUid
         dbUser = await prisma.user.findUnique({
           where: { firebaseUid },
           include: { profile: true },
@@ -136,20 +151,9 @@ export async function POST(request: NextRequest) {
       },
     };
 
-    const response = NextResponse.json({
-      success: true,
-      user,
-    });
-
-    response.cookies.set(SESSION_COOKIE_NAME, sessionCookie, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      path: '/',
-      sameSite: 'lax',
-      maxAge: SESSION_COOKIE_MAX_AGE_SECONDS,
-    });
-
-    return response;
+    // Do not set a server session cookie here. Require users to sign in via the login
+    // endpoint so a proper server session is created there.
+    return NextResponse.json({ success: true, user });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Failed to create account';
     console.error('Sign up error:', error);

@@ -52,3 +52,22 @@ export interface Certification {
 }
 
 export type CVTemplate = 'modern' | 'classic' | 'minimalist' | 'professional';
+
+// --- UTILITY: Add this to the bottom of the file ---
+
+export const initialCVData: CVData = {
+  personalDetails: {
+    fullName: '',
+    email: '',
+    phone: '',
+    address: '',
+    summary: '',
+    website: '',
+    linkedin: '',
+  },
+  education: [],
+  experience: [],
+  skills: [],
+  projects: [],
+  certifications: [],
+};

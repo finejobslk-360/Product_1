@@ -100,9 +100,11 @@ export default function SignInPage() {
       if (data.user.role === 'ADMIN') {
         router.push('/dashboard/admin');
       } else if (data.user.role === 'EMPLOYER') {
-        router.push('/dashboard/employer');
+        router.push('/dashboard');
+      } else if (data.user.role === 'JOB_SEEKER') {
+        router.push('/user');
       } else {
-        router.push('/dashboard/seeker');
+        router.push('/user');
       }
       setLoading(false);
     } catch (err) {
@@ -179,9 +181,11 @@ export default function SignInPage() {
       if (data.user.role === 'ADMIN') {
         router.push('/dashboard/admin');
       } else if (data.user.role === 'EMPLOYER') {
-        router.push('/dashboard/employer');
+        router.push('/dashboard');
+      } else if (data.user.role === 'JOB_SEEKER') {
+        router.push('/user');
       } else {
-        router.push('/dashboard/seeker');
+        router.push('/user');
       }
       setLoading(false);
     } catch (err) {
@@ -259,7 +263,7 @@ export default function SignInPage() {
           <div className="bg-white border border-white/40 rounded-xl shadow-[0_25px_55px_rgba(15,23,42,0.35)] p-5 md:p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-9 h-9 rounded-lg bg-blue-600 text-white flex items-center justify-center text-base font-bold">
-                360°
+                
               </div>
               <div>
                 <p className="text-[10px] tracking-widest text-gray-400 uppercase font-semibold">
