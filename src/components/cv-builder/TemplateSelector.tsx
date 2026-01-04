@@ -1,6 +1,6 @@
 import React from 'react';
 import { CVTemplate } from '@/types/cv';
-// import Image from 'next/image'; // Recommended if using Next.js
+import Image from 'next/image';
 
 interface TemplateSelectorProps {
   selected: CVTemplate;
@@ -40,6 +40,18 @@ const templates: TemplateOption[] = [
     image: '/templates/professional.png', 
     description: 'Professional design for experienced candidates.',
   },
+  {
+    id: 'executive',
+    name: 'Executive Template',
+    image: '/templates/executive.png',
+    description: 'Sophisticated layout for high-level professionals.',
+  },
+  {
+    id: 'creative',
+    name: 'Creative Template',
+    image: '/templates/creative.png',
+    description: 'Bold and unique design for creative roles.',
+  },
 ];
 
 export default function TemplateSelector({ selected, onSelect }: TemplateSelectorProps) {
@@ -69,12 +81,17 @@ export default function TemplateSelector({ selected, onSelect }: TemplateSelecto
           >
             {/* Template Preview Image Area */}
             <div className="w-full aspect-[210/297] bg-gray-100 mb-4 rounded-lg overflow-hidden relative border border-gray-100">
-              {/* If using Next.js Image: 
-              <Image src={template.image} alt={template.name} fill className="object-cover" /> 
-              */}
+              <Image 
+                src={template.image} 
+                alt={template.name} 
+                fill 
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
               
-              <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm font-medium bg-gray-50">
-                {template.name} Preview
+              {/* Fallback overlay if image is missing or loading */}
+              <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm font-medium bg-gray-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                {template.name}
               </div>
             </div>
 

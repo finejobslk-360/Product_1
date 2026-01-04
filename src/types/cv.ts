@@ -13,6 +13,20 @@ export interface CVData {
   skills: string[];
   projects: Project[];
   certifications: Certification[];
+  references?: Reference[];
+  achievements?: string[];
+  languages?: string[];
+  awards?: string[];
+  softSkills?: string[];
+}
+
+export interface Reference {
+  id: string;
+  name: string;
+  position: string;
+  company: string;
+  phone: string;
+  email?: string;
 }
 
 export interface Education {
@@ -51,7 +65,7 @@ export interface Certification {
   date: string;
 }
 
-export type CVTemplate = 'modern' | 'classic' | 'minimalist' | 'professional';
+export type CVTemplate = 'modern' | 'classic' | 'minimalist' | 'professional' | 'executive' | 'creative';
 
 // --- UTILITY: Add this to the bottom of the file ---
 
@@ -70,4 +84,9 @@ export const initialCVData: CVData = {
   skills: [],
   projects: [],
   certifications: [],
+  references: [],
+  achievements: [],
+  languages: [],
+  awards: [],
+  softSkills: [],
 };
